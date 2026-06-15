@@ -9,37 +9,38 @@
             font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
             background-color: #f8f9fa;
             margin: 0;
-            padding: 20px;
+            padding: 10px; /* 전체 여백 축소 20px -> 10px */
             color: #343a40;
         }
         .container {
             max-width: 900px;
             margin: 0 auto;
             background: #ffffff;
-            padding: 30px;
+            padding: 20px; /* 컨테이너 내부 여백 축소 30px -> 20px */
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
         h1 {
             text-align: center;
             color: #2c3e50;
-            margin-bottom: 10px;
+            margin-bottom: 5px; /* 제목 아래 여백 축소 */
+            font-size: 1.6rem;
         }
         .guide {
             text-align: center;
             color: #868e96;
-            margin-bottom: 30px;
-            font-size: 1.05rem;
+            margin-bottom: 15px; /* 안내문구 아래 여백 축소 30px -> 15px */
+            font-size: 1rem;
         }
         .controls {
             display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 10px; /* 버튼/셀렉트박스 사이 간격 축소 15px -> 10px */
+            margin-bottom: 15px; /* 20px -> 15px */
             flex-wrap: wrap;
         }
         select, button {
-            padding: 12px 20px;
-            font-size: 1.1rem;
+            padding: 10px 15px; /* 높이 축소 12px 20px -> 10px 15px */
+            font-size: 1.05rem;
             border-radius: 8px;
             border: 2px solid #dee2e6;
             outline: none;
@@ -78,36 +79,36 @@
 
         /* 🌟 문장 배열 영역 스타일 */
         .game-area {
-            margin-top: 20px;
-            padding-top: 20px;
+            margin-top: 15px; /* 20px -> 15px */
+            padding-top: 15px; /* 20px -> 15px */
             border-top: 1px dashed #dee2e6;
         }
         .korean-hint {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             font-weight: bold;
             color: #495057;
-            margin-bottom: 15px;
-            line-height: 1.6;
+            margin-bottom: 10px; /* 15px -> 10px */
+            line-height: 1.4;
             word-break: keep-all;
         }
         
         .box-title {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: #adb5bd;
-            margin-bottom: 8px;
+            margin-bottom: 5px; /* 8px -> 5px */
         }
 
         .selected-box, .pool-box {
-            min-height: 70px;
+            min-height: 50px; /* 박스 최소 높이 축소 70px -> 50px */
             background-color: #f8f9fa;
             border: 2px dashed #ced4da;
             border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 25px;
+            padding: 10px; /* 박스 안쪽 여백 축소 15px -> 10px */
+            margin-bottom: 15px; /* 박스 아래 여백 축소 25px -> 15px */
             display: flex;
             flex-wrap: wrap;
             align-content: flex-start;
-            gap: 10px;
+            gap: 8px; /* 단어 칩 사이 간격 축소 10px -> 8px */
         }
 
         .pool-box {
@@ -118,8 +119,8 @@
         /* 🌟 단어 칩 스타일 */
         .word-chip {
             display: inline-block;
-            padding: 8px 16px;
-            font-size: 1.1rem;
+            padding: 6px 14px; /* 단어 칩 크기 축소 8px 16px -> 6px 14px */
+            font-size: 1.05rem;
             background-color: #e9ecef;
             color: #495057;
             border-radius: 20px;
@@ -142,11 +143,11 @@
 
         /* 🌟 피드백 메시지 스타일 */
         .feedback {
-            margin-top: 20px;
-            padding: 15px;
+            margin-top: 15px; /* 20px -> 15px */
+            padding: 12px; /* 15px -> 12px */
             border-radius: 8px;
-            font-size: 1.1rem;
-            line-height: 1.6;
+            font-size: 1.05rem;
+            line-height: 1.4;
             display: none; /* 기본 숨김 */
             word-break: keep-all;
         }
@@ -162,7 +163,7 @@
         }
 
         @media (max-width: 600px) {
-            .controls { flex-direction: column; }
+            .controls { flex-direction: column; gap: 8px; }
             button, select { width: 100%; }
             .action-buttons { flex-direction: column; }
         }
@@ -186,13 +187,13 @@
     <div class="game-area">
         <div id="korean-hint" class="korean-hint">💡 뜻: 문장을 불러오는 중입니다...</div>
         
-        <div class="box-title">👇 완성된 문장 (여기로 단어가 이동합니다. 다시 누르면 아래로 내려갑니다.)</div>
+        <div class="box-title">👇 완성된 문장 (여기로 단어가 이동합니다)</div>
         <div id="selected-box" class="selected-box"></div>
         
-        <div class="box-title">👇 남은 단어들 (단어를 순서대로 터치하세요.)</div>
+        <div class="box-title">👇 남은 단어들 (단어를 순서대로 터치하세요)</div>
         <div id="pool-box" class="pool-box"></div>
 
-        <div class="controls action-buttons" style="margin-top: 20px;">
+        <div class="controls action-buttons" style="margin-top: 10px;">
             <button class="btn-reset" onclick="resetWords()">🔄 처음부터 다시 조립</button>
             <button class="btn-check" onclick="checkAnswer()">✅ 정답 확인</button>
         </div>
@@ -473,7 +474,7 @@ We encounter framing effects everywhere in our daily lives.
 One of the areas where it is particularly useful and constantly used is business.
 그것이 특히 유용하고 지속적으로 사용되는 분야 중 하나는 비즈니스이다.
 For example, a customer may decide not to buy a gym membership that costs 500,000 won a year because it sounds too expensive.
-예를 들어, 일 년에 50만원인 체육관 회원권은 너무 비싸게 들리기 때문에 고객이 구입하지 않겠다는 결정을 내릴 수 있다.
+예를 들어, 일 일 년에 50만원인 체육관 회원권은 너무 비싸게 들리기 때문에 고객이 구입하지 않겠다는 결정을 내릴 수 있다.
 However, if the same membership is advertised as only 1,370 won a day, that same consumer may consider it cheap and eagerly purchase it.
 하지만, 만약 동일한 회원권이 하루에 1,370원이라고 광고된다면, 그 같은 고객은 그것을 싸다고 여기고 적극적으로 그것을 구매할 수 있다.
 The framing effect is also common in the mass media, where it often has a decisive impact on public opinion.
