@@ -13,6 +13,8 @@
             margin: 0;
             padding: 10px;
             color: #343a40;
+            /* 드래그 시 화면 전체 스크롤 방지용 */
+            overscroll-behavior-y: none; 
         }
         .container {
             max-width: 900px;
@@ -33,6 +35,7 @@
             color: #868e96;
             margin-bottom: 15px;
             font-size: 1rem;
+            word-break: keep-all;
         }
         .controls {
             display: flex;
@@ -131,10 +134,18 @@
             color: #495057;
             border-radius: 20px;
             cursor: grab; 
+            
+            /* ⭐ 텍스트 선택 방지 (더블클릭/드래그 방해 요소 제거) */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
             user-select: none;
+            -webkit-touch-callout: none;
+            
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.1s;
-            touch-action: manipulation;
+            
+            /* ⭐ 주의: transform 등 위치 관련 transition은 드래그 라이브러리와 충돌하므로 제거함 */
+            transition: background-color 0.1s, color 0.1s;
         }
         
         .word-chip:active {
@@ -152,13 +163,14 @@
             background-color: #adb5bd !important;
         }
         
-        /* ⭐ 마우스나 손가락으로 잡고 끌고 다니는 단어의 디자인 */
+        /* 공중에 떠 있는 드래그 아이템의 디자인 */
         .sortable-fallback {
             opacity: 1 !important;
-            background-color: #ffec99 !important; /* 노란색 하이라이트 */
+            background-color: #ffec99 !important; /* 노란색 강조 */
             color: #000 !important;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.2) !important;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3) !important;
             cursor: grabbing !important;
+            z-index: 9999 !important; /* 항상 맨 위에 보이게 */
         }
 
         .feedback {
@@ -192,7 +204,7 @@
 
 <div class="container">
     <h1>🧩 랜덤 문장 배열 맞추기</h1>
-    <div class="guide">👆 단어를 <b>클릭(터치)</b>하여 위아래로 옮기거나, <b>드래그</b>하여 원하는 순서에 끼워넣으세요.</div>
+    <div class="guide">👆 단어를 <b>터치(클릭)</b>하여 올리거나, <b>길게 눌러 드래그</b>하여 끼워넣으세요.</div>
     
     <div class="controls">
         <select id="lesson-select" onchange="startNewGame()">
@@ -206,7 +218,7 @@
     <div class="game-area">
         <div id="korean-hint" class="korean-hint">💡 뜻: 문장을 불러오는 중입니다...</div>
         
-        <div class="box-title">👇 완성된 문장 (여기로 단어가 이동합니다 / 드래그로 순서 변경 가능)</div>
+        <div class="box-title">👇 완성된 문장 (여기로 단어가 이동합니다)</div>
         <div id="selected-box" class="selected-box"></div>
         
         <div class="box-title">👇 남은 단어들</div>
@@ -223,7 +235,7 @@
 
 <script>
     const textDB = {
-        // (텍스트 데이터는 이전과 동일)
+        // (데이터는 동일)
         "lesson3_main": `
 Do you think you would be happy being a child prodigy, someone who is truly gifted in something at a very young age?
 여러분은 매우 어린 나이에 무언가에 매우 재능이 있는 사람인 신동이 되면 행복할 것이라고 생각하는가?
@@ -536,23 +548,17 @@ Only then will we truly have the power over our thoughts that Descartes believed
     let currentSentence = null;
     let sentencePools = {};
     let totalSentenceCounts = {};
-    
-    // 드래그 중복 충돌을 방지하기 위한 변수
-    window.isDragging = false; 
+    let isDragging = false; 
 
     function extractSentences(rawText) {
         const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
         const sentences = [];
         let currentEng = "";
-
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
             const isKorean = /[가-힣]/.test(line);
-
             if (!isKorean) {
-                if (line.split(' ').length > 2) {
-                    currentEng = line;
-                }
+                if (line.split(' ').length > 2) currentEng = line;
             } else {
                 if (currentEng) {
                     sentences.push({ eng: currentEng, kor: line });
@@ -572,12 +578,10 @@ Only then will we truly have the power over our thoughts that Descartes believed
 
     function startNewGame() {
         const selectedLesson = document.getElementById('lesson-select').value;
-        
         if (!sentencePools[selectedLesson] || sentencePools[selectedLesson].length === 0) {
             let extracted = extractSentences(textDB[selectedLesson]);
             shuffle(extracted);
             sentencePools[selectedLesson] = extracted;
-            
             if (totalSentenceCounts[selectedLesson]) {
                 alert("🔄 이 지문의 모든 문장을 다 풀었습니다! 새롭게 섞어서 다시 시작합니다.");
             }
@@ -585,7 +589,6 @@ Only then will we truly have the power over our thoughts that Descartes believed
         }
 
         currentSentence = sentencePools[selectedLesson].pop();
-        
         const remainingCount = sentencePools[selectedLesson].length;
         const totalCount = totalSentenceCounts[selectedLesson];
 
@@ -601,19 +604,13 @@ Only then will we truly have the power over our thoughts that Descartes believed
         const selectedBox = document.getElementById('selected-box');
         
         selectedBox.innerHTML = ''; 
-        // 칩 생성 (onclick 속성을 제거하고 이벤트 리스너로 처리합니다)
-        poolBox.innerHTML = poolWordsArray.map(w => 
-            `<span class="word-chip">${w.text}</span>`
-        ).join('');
+        poolBox.innerHTML = poolWordsArray.map(w => `<span class="word-chip">${w.text}</span>`).join('');
     }
 
     function resetWords() {
         const selectedBox = document.getElementById('selected-box');
         const poolBox = document.getElementById('pool-box');
-        
-        while (selectedBox.firstChild) {
-            poolBox.appendChild(selectedBox.firstChild);
-        }
+        while (selectedBox.firstChild) poolBox.appendChild(selectedBox.firstChild);
         hideFeedback();
     }
 
@@ -652,50 +649,76 @@ Only then will we truly have the power over our thoughts that Descartes believed
         }
     }
 
-    // ⭐ 초기화 세팅
-    window.onload = function() {
-        const selectedBox = document.getElementById('selected-box');
-        const poolBox = document.getElementById('pool-box');
+    // ⭐ 터치/클릭을 수학적으로 계산하여 드래그와 완벽하게 분리하는 로직
+    let startX = 0, startY = 0, startTime = 0;
 
-        // 드래그 라이브러리(SortableJS) 최적화 옵션
-        const sortableOptions = {
-            group: 'shared',
-            animation: 150,
-            ghostClass: 'sortable-ghost',
-            // ⭐ 핵심! 기기 자체 드래그를 끄고 자바스크립트로 강제 드래그 처리 (오류 방지)
-            forceFallback: true, 
-            fallbackClass: 'sortable-fallback',
-            fallbackTolerance: 5,
-            delay: 50,
-            delayOnTouchOnly: true, 
-            onStart: function(evt) {
-                window.isDragging = true;
-            },
-            onEnd: function(evt) {
-                setTimeout(() => {
-                    window.isDragging = false;
-                }, 100);
-                hideFeedback();
-            }
-        };
+    function handleInputStart(e) {
+        const chip = e.target.closest('.word-chip');
+        if (!chip) return;
+        const touch = e.touches ? e.touches[0] : e;
+        startX = touch.clientX;
+        startY = touch.clientY;
+        startTime = Date.now();
+    }
 
-        new Sortable(selectedBox, sortableOptions);
-        new Sortable(poolBox, sortableOptions);
+    function handleInputEnd(e) {
+        if (isDragging) return; // 드래그 상태면 무시
+        const chip = e.target.closest('.word-chip');
+        if (!chip) return;
 
-        // ⭐ 단어 클릭 시 위아래로 이동하는 기능 (드래그와 충돌하지 않도록 처리)
-        document.addEventListener('click', function(e) {
-            if (window.isDragging) return; // 드래그 중일 때는 무시
-            
-            const chip = e.target.closest('.word-chip');
-            if (!chip) return; // 클릭한 곳이 단어가 아니면 무시
-            
+        const touch = e.changedTouches ? e.changedTouches[0] : e;
+        const dx = Math.abs(touch.clientX - startX);
+        const dy = Math.abs(touch.clientY - startY);
+        const dt = Date.now() - startTime;
+
+        // X, Y로 이동한 거리가 10px 이하이고 누른 시간이 0.3초 미만이면 "클릭(터치)"으로 간주
+        if (dx < 10 && dy < 10 && dt < 300) {
+            const poolBox = document.getElementById('pool-box');
+            const selectedBox = document.getElementById('selected-box');
             if (chip.parentNode === poolBox) {
                 selectedBox.appendChild(chip);
             } else if (chip.parentNode === selectedBox) {
                 poolBox.appendChild(chip);
             }
             hideFeedback();
-        });
+        }
+    }
+
+    // 마우스 및 터치 이벤트 리스너 등록
+    document.addEventListener('mousedown', handleInputStart);
+    document.addEventListener('touchstart', handleInputStart, {passive: true});
+    document.addEventListener('mouseup', handleInputEnd);
+    document.addEventListener('touchend', handleInputEnd);
+
+    window.onload = function() {
+        const selectedBox = document.getElementById('selected-box');
+        const poolBox = document.getElementById('pool-box');
+
+        const sortableOptions = {
+            group: 'shared',
+            animation: 150, // 부드러운 위치 이동 애니메이션
+            ghostClass: 'sortable-ghost',
+            forceFallback: true, 
+            fallbackClass: 'sortable-fallback',
+            
+            // ⭐ 핵심: 드래그 중인 요소를 body에 붙여서, 박스 밖으로 나가도 잘리지 않게 함
+            fallbackOnBody: true, 
+            
+            fallbackTolerance: 5,
+            delay: 150, // 0.15초 이상 꾹 누르고 있어야 드래그로 인식 (클릭과 구분)
+            delayOnTouchOnly: true, 
+            onStart: function() {
+                isDragging = true;
+            },
+            onEnd: function() {
+                // 드래그가 끝난 후 아주 잠깐동안 터치(클릭) 이벤트를 무시하여 충돌 방지
+                setTimeout(() => { isDragging = false; }, 50);
+                hideFeedback();
+            }
+        };
+
+        new Sortable(selectedBox, sortableOptions);
+        new Sortable(poolBox, sortableOptions);
 
         startNewGame();
     };
