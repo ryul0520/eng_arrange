@@ -135,7 +135,7 @@
             border-radius: 20px;
             cursor: grab; 
             
-            /* ⭐ 텍스트 선택 방지 (더블클릭/드래그 방해 요소 제거) */
+            /* 텍스트 선택 방지 (더블클릭/드래그 방해 요소 제거) */
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
@@ -143,8 +143,6 @@
             -webkit-touch-callout: none;
             
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            
-            /* ⭐ 주의: transform 등 위치 관련 transition은 드래그 라이브러리와 충돌하므로 제거함 */
             transition: background-color 0.1s, color 0.1s;
         }
         
@@ -235,7 +233,7 @@
 
 <script>
     const textDB = {
-        // (데이터는 동일)
+        // (기존 텍스트 데이터 유지)
         "lesson3_main": `
 Do you think you would be happy being a child prodigy, someone who is truly gifted in something at a very young age?
 여러분은 매우 어린 나이에 무언가에 매우 재능이 있는 사람인 신동이 되면 행복할 것이라고 생각하는가?
@@ -380,7 +378,7 @@ Here comes the concept called neuroplasticity, which is the ability of the brain
 Dr. Matthew Bambling of the University of Queensland, Australia, believes that learning new things stimulates the brain and encourages it to rewire itself and change throughout life.
 호주 Queensland 대학의 Matthew Bambling 박사는 새로운 것을 배우는 것은 뇌를 자극해서 뇌가 평생 스스로를 재연결하고 변화하도록 장려한다고 믿는다.
 By learning new activities, our brain can develop new neural connections and thus alter its physical structure.
-새로운 활동을 배움으로써 우리의 뇌는 새로운 신경 연결을 발달시키고, 따라서 뇌의 물리적 구조를 바꿀 수 있다.
+새로운 활동을 배움으로써 우리의 뇌는 새로운 신경 연결을 발달시키고, 따라서 뇌의 물리적 구조를 바꿀 수 단.
 “The brain is a remarkably flexible and dynamic organ.
 뇌는 놀랍게도 유연하고 역동적인 기관입니다.
 The old saying ‘use it or lose it’ might never be more true than for the brain,” he says.
@@ -649,12 +647,27 @@ Only then will we truly have the power over our thoughts that Descartes believed
         }
     }
 
-    // ⭐ 터치/클릭을 수학적으로 계산하여 드래그와 완벽하게 분리하는 로직
+
+    // ⭐ 모바일 "고스트 클릭(Double Fire)"을 방지하는 정교한 이벤트 블로킹 로직 ⭐
     let startX = 0, startY = 0, startTime = 0;
+    let ignoreMouse = false;     // 마우스 이벤트를 일시적으로 무시할지 결정하는 플래그
+    let blockMouseTimer = null;  // 타이머 변수
 
     function handleInputStart(e) {
+        // 1) 터치 이벤트가 시작되면, 앞으로 0.5초 동안 발생하는 마우스 이벤트는 전부 가짜(고스트)로 간주하고 무시함
+        if (e.type === 'touchstart') {
+            ignoreMouse = true;
+            clearTimeout(blockMouseTimer);
+            blockMouseTimer = setTimeout(() => { ignoreMouse = false; }, 500);
+        } 
+        // 2) 가짜 마우스 이벤트면 로직을 여기서 아예 중단시킴
+        else if (e.type === 'mousedown' && ignoreMouse) {
+            return;
+        }
+
         const chip = e.target.closest('.word-chip');
         if (!chip) return;
+        
         const touch = e.touches ? e.touches[0] : e;
         startX = touch.clientX;
         startY = touch.clientY;
@@ -662,7 +675,11 @@ Only then will we truly have the power over our thoughts that Descartes believed
     }
 
     function handleInputEnd(e) {
-        if (isDragging) return; // 드래그 상태면 무시
+        if (isDragging) return; // 드래그 중이거나 끝난 직후라면 클릭 처리 안 함
+        
+        // 터치 이후에 따라오는 가짜 마우스업 이벤트 무시
+        if (e.type === 'mouseup' && ignoreMouse) return;
+
         const chip = e.target.closest('.word-chip');
         if (!chip) return;
 
@@ -671,16 +688,20 @@ Only then will we truly have the power over our thoughts that Descartes believed
         const dy = Math.abs(touch.clientY - startY);
         const dt = Date.now() - startTime;
 
-        // X, Y로 이동한 거리가 10px 이하이고 누른 시간이 0.3초 미만이면 "클릭(터치)"으로 간주
-        if (dx < 10 && dy < 10 && dt < 300) {
+        // X, Y로 이동한 거리가 10px 이하이고 누른 시간이 0.3초 미만일 때만 정상적인 "클릭/터치"로 인정
+        if (dx < 10 && dy < 10 && dt > 0 && dt < 300) {
             const poolBox = document.getElementById('pool-box');
             const selectedBox = document.getElementById('selected-box');
+            
             if (chip.parentNode === poolBox) {
                 selectedBox.appendChild(chip);
             } else if (chip.parentNode === selectedBox) {
                 poolBox.appendChild(chip);
             }
             hideFeedback();
+            
+            // ⭐ 이벤트를 한 번 처리했으면 startTime을 0으로 만들어 두 번째 중복 처리가 아예 불가능하게 막음
+            startTime = 0; 
         }
     }
 
@@ -690,28 +711,25 @@ Only then will we truly have the power over our thoughts that Descartes believed
     document.addEventListener('mouseup', handleInputEnd);
     document.addEventListener('touchend', handleInputEnd);
 
+
     window.onload = function() {
         const selectedBox = document.getElementById('selected-box');
         const poolBox = document.getElementById('pool-box');
 
         const sortableOptions = {
             group: 'shared',
-            animation: 150, // 부드러운 위치 이동 애니메이션
+            animation: 150, 
             ghostClass: 'sortable-ghost',
             forceFallback: true, 
             fallbackClass: 'sortable-fallback',
-            
-            // ⭐ 핵심: 드래그 중인 요소를 body에 붙여서, 박스 밖으로 나가도 잘리지 않게 함
             fallbackOnBody: true, 
-            
             fallbackTolerance: 5,
-            delay: 150, // 0.15초 이상 꾹 누르고 있어야 드래그로 인식 (클릭과 구분)
+            delay: 150, 
             delayOnTouchOnly: true, 
             onStart: function() {
                 isDragging = true;
             },
             onEnd: function() {
-                // 드래그가 끝난 후 아주 잠깐동안 터치(클릭) 이벤트를 무시하여 충돌 방지
                 setTimeout(() => { isDragging = false; }, 50);
                 hideFeedback();
             }
