@@ -9,37 +9,37 @@
             font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
             background-color: #f8f9fa;
             margin: 0;
-            padding: 10px; /* 전체 여백 축소 20px -> 10px */
+            padding: 10px;
             color: #343a40;
         }
         .container {
             max-width: 900px;
             margin: 0 auto;
             background: #ffffff;
-            padding: 20px; /* 컨테이너 내부 여백 축소 30px -> 20px */
+            padding: 20px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
         h1 {
             text-align: center;
             color: #2c3e50;
-            margin-bottom: 5px; /* 제목 아래 여백 축소 */
+            margin-bottom: 5px;
             font-size: 1.6rem;
         }
         .guide {
             text-align: center;
             color: #868e96;
-            margin-bottom: 15px; /* 안내문구 아래 여백 축소 30px -> 15px */
+            margin-bottom: 15px;
             font-size: 1rem;
         }
         .controls {
             display: flex;
-            gap: 10px; /* 버튼/셀렉트박스 사이 간격 축소 15px -> 10px */
-            margin-bottom: 15px; /* 20px -> 15px */
+            gap: 10px;
+            margin-bottom: 15px;
             flex-wrap: wrap;
         }
         select, button {
-            padding: 10px 15px; /* 높이 축소 12px 20px -> 10px 15px */
+            padding: 10px 15px;
             font-size: 1.05rem;
             border-radius: 8px;
             border: 2px solid #dee2e6;
@@ -77,38 +77,43 @@
             border-color: #868e96;
         }
 
-        /* 🌟 문장 배열 영역 스타일 */
         .game-area {
-            margin-top: 15px; /* 20px -> 15px */
-            padding-top: 15px; /* 20px -> 15px */
+            margin-top: 15px;
+            padding-top: 15px;
             border-top: 1px dashed #dee2e6;
         }
         .korean-hint {
             font-size: 1.1rem;
             font-weight: bold;
             color: #495057;
-            margin-bottom: 10px; /* 15px -> 10px */
+            margin-bottom: 10px;
             line-height: 1.4;
             word-break: keep-all;
+        }
+        .progress-text {
+            font-size: 0.9rem;
+            font-weight: normal;
+            color: #adb5bd;
+            margin-left: 8px;
         }
         
         .box-title {
             font-size: 0.9rem;
             color: #adb5bd;
-            margin-bottom: 5px; /* 8px -> 5px */
+            margin-bottom: 5px;
         }
 
         .selected-box, .pool-box {
-            min-height: 50px; /* 박스 최소 높이 축소 70px -> 50px */
+            min-height: 50px;
             background-color: #f8f9fa;
             border: 2px dashed #ced4da;
             border-radius: 8px;
-            padding: 10px; /* 박스 안쪽 여백 축소 15px -> 10px */
-            margin-bottom: 15px; /* 박스 아래 여백 축소 25px -> 15px */
+            padding: 10px;
+            margin-bottom: 15px;
             display: flex;
             flex-wrap: wrap;
             align-content: flex-start;
-            gap: 8px; /* 단어 칩 사이 간격 축소 10px -> 8px */
+            gap: 8px;
         }
 
         .pool-box {
@@ -116,10 +121,9 @@
             background-color: #fff;
         }
 
-        /* 🌟 단어 칩 스타일 */
         .word-chip {
             display: inline-block;
-            padding: 6px 14px; /* 단어 칩 크기 축소 8px 16px -> 6px 14px */
+            padding: 6px 14px;
             font-size: 1.05rem;
             background-color: #e9ecef;
             color: #495057;
@@ -141,14 +145,13 @@
             background-color: #228be6;
         }
 
-        /* 🌟 피드백 메시지 스타일 */
         .feedback {
-            margin-top: 15px; /* 20px -> 15px */
-            padding: 12px; /* 15px -> 12px */
+            margin-top: 15px;
+            padding: 12px;
             border-radius: 8px;
             font-size: 1.05rem;
             line-height: 1.4;
-            display: none; /* 기본 숨김 */
+            display: none;
             word-break: keep-all;
         }
         .feedback.correct {
@@ -181,7 +184,7 @@
             <option value="lesson3_extra">📑 3과 추가지문 (Neuroplasticity)</option>
             <option value="lesson4_main">📖 4과 본문 (Decision Making)</option>
         </select>
-        <button class="btn-generate" onclick="startNewGame()">🎲 새로운 문장 뽑기</button>
+        <button class="btn-generate" onclick="startNewGame()">🎲 다음 문장 뽑기</button>
     </div>
 
     <div class="game-area">
@@ -445,7 +448,7 @@ It may cause people to vote for an already popular political candidate without c
 그것은 사람들이 정치 후보자의 성격이나 정책을 신중하게 살피지 않고서 이미 인기 있는 정치 후보자에게 투표를 하게 할 수도 있다.
 Worse, voters may be tricked into believing a certain candidate is popular and into supporting him or her.
 심지어, 유권자들은 속아서 특정 후보자가 인기 있다고 믿게 되고 그 또는 그녀를 지지하게 될 수도 있다.
-This 기 how Adolf Hitler came to power early in his political career.
+This is how Adolf Hitler came to power early in his political career.
 이것이 Adolf Hitler가 그의 정치 경력 초기에 권력을 얻은 방법이다.
 When the Nazi party was new and unknown, he used radio broadcasts to make his party appear important and popular, and this convinced many German people to vote for the Nazis without knowing much about what the party really stood for.
 나치당이 새롭고 알려지지 않았을 때, 그는 라디오 방송을 사용하여 자신의 당이 중요하고 대중적이게 보이도록 하였으며, 이는 많은 독일인들이 그 정당이 실제로 무엇을 표방하는지에 대해 많이 알지 못한 채로 나치당원에 투표하도록 하였다.
@@ -518,6 +521,10 @@ Only then will we truly have the power over our thoughts that Descartes believed
     let poolWords = [];
     let selectedWords = [];
 
+    // ⭐ ️지문별 남은 문장들을 담아둘 큐(배열) 관리 객체
+    let sentencePools = {};
+    let totalSentenceCounts = {}; // 진행도 표시용
+
     // 영어문장-한국어뜻 쌍으로 추출하는 함수
     function extractSentences(rawText) {
         const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
@@ -553,10 +560,25 @@ Only then will we truly have the power over our thoughts that Descartes believed
     // 새 게임 시작
     function startNewGame() {
         const selectedLesson = document.getElementById('lesson-select').value;
-        const sentences = extractSentences(textDB[selectedLesson]);
         
-        const randIndex = Math.floor(Math.random() * sentences.length);
-        currentSentence = sentences[randIndex];
+        // ⭐ 지문 풀(Pool)이 비어있거나 없으면 새롭게 추출하여 섞어서 담아둠 (중복방지 핵심로직)
+        if (!sentencePools[selectedLesson] || sentencePools[selectedLesson].length === 0) {
+            let extracted = extractSentences(textDB[selectedLesson]);
+            shuffle(extracted); // 랜덤하게 섞음
+            sentencePools[selectedLesson] = extracted;
+            
+            // 처음이 아닐 때만(한바퀴 다 돌았을때) 알람 표시
+            if (totalSentenceCounts[selectedLesson]) {
+                alert("🔄 이 지문의 모든 문장을 다 풀었습니다! 새롭게 섞어서 다시 시작합니다.");
+            }
+            totalSentenceCounts[selectedLesson] = extracted.length;
+        }
+
+        // ⭐ 배열의 마지막 요소를 꺼냄 (꺼내므로 남은 횟수는 점점 줄어듦)
+        currentSentence = sentencePools[selectedLesson].pop();
+        
+        const remainingCount = sentencePools[selectedLesson].length;
+        const totalCount = totalSentenceCounts[selectedLesson];
 
         // 띄어쓰기 기준으로 단어 분리
         const words = currentSentence.eng.split(/\s+/);
@@ -565,8 +587,9 @@ Only then will we truly have the power over our thoughts that Descartes believed
         shuffle(poolWords); // 배열 섞기
         selectedWords = []; // 선택된 단어 비우기
 
-        // UI 초기화
-        document.getElementById('korean-hint').innerText = "💡 뜻: " + currentSentence.kor;
+        // UI 초기화 (남은 문장 개수도 함께 표시)
+        document.getElementById('korean-hint').innerHTML = 
+            `💡 뜻: ${currentSentence.kor} <span class="progress-text">(남은 문장: ${remainingCount}/${totalCount})</span>`;
         hideFeedback();
         renderBoxes();
     }
